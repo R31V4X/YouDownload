@@ -31,7 +31,9 @@ youdl_label.place(anchor=CENTER, x = WIN_X_MID, y = 150)
 enter_link_label = Label(root, text="Enter the link of the video to download: ")
 enter_link_label.place(x=20, y=200)
 
-
+# Field for link
+field = Entry(root, width=37)
+field.place(x = 245, y = 199)
 
 root.mainloop()
 
