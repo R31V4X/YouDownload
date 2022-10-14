@@ -1,8 +1,10 @@
+from cProfile import label
 from tkinter import *
 from tkinter.ttk import *
 import pytube
 import os
 from PIL import ImageTk, Image
+import time
 
 
 root = Tk()
@@ -15,6 +17,11 @@ root.title("YouDownload")
 root.iconbitmap("src/icon.ico")
 root.geometry(f"{WIN_WIDTH}x{WIN_HEIGHT}+{WIN_X}+{WIN_Y}")
 root.resizable(False, False)
+
+# Path
+home = os.path.expanduser("~")
+path_download = os.path.join(home, "Downloads")
+print(path_download)
 
 # logo
 logo_size = (100, 100)
@@ -34,21 +41,69 @@ enter_link_label.place(x=20, y=200)
 field = Entry(root, width=37)
 field.place(x = 245, y = 199)
 
+# Progress bar
+progress_bar = Progressbar(root, orient = "horizontal", length=350, mode="determinate")
 
-# Btn pressedd
+# Progress bar progress
+def percent(bytes_remaning, size):
+    return (((size-bytes_remaning)/size)*100)
+
+progress = 1
+def on_progress(stream, chunk, bytes_remaining):
+    global progress
+    size = stream.filesize
+    progress = percent(bytes_remaining, size)
+    progress_bar["value"] = progress
+    root.update()
+
+# Complete
+complete = False
+def complete(stream, path):
+    global complete
+    downloading_label["text"] = "Download Successful!"
+    complete = True
+
+# Downloading label
+downloading_label = Label(root, text="Downloading.")
+
+# Def downloading loop
+def loop(i=0):
+    global complete
+    if complete == True:
+        return None
+    downloading_label["text"] = "Downloading." + str((i % 3) * ".")
+    root.after(400, loop, i+1)
+
+# Btn pressed
 state_label = Label(root, text="")
+
+
 def btn_pressed():
     global state_label
     link = field.get()
     try:
-        video = pytube.YouTube(link)
+        video_link = pytube.YouTube(link, on_progress_callback=on_progress, on_complete_callback=complete)
     except:
         state_label.config(text="Video Not Found!")
         state_label.place(anchor=CENTER, x = WIN_X_MID, y = 270)
         return None
-
+        
+    # State
     state_label.config(text="Video Found!")
     state_label.place(anchor=CENTER, x = WIN_X_MID, y = 270)
+
+
+    progress_bar.place(anchor=CENTER, x = WIN_X_MID, y = 300)
+    downloading_label.place(anchor=CENTER, x= WIN_X_MID, y = 320)
+    loop()
+    
+
+
+    
+
+    # Get youtube video
+    video = video_link.streams.get_highest_resolution().download(path_download)
+
 
 # Dl Button
 download_btn = Button(root, text="Download", width=30, command=btn_pressed)
