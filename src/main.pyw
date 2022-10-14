@@ -1,10 +1,10 @@
-from cProfile import label
+from cProfile import run
 from tkinter import *
 from tkinter.ttk import *
 import pytube
 import os
+import sys
 from PIL import ImageTk, Image
-import time
 
 
 root = Tk()
@@ -21,7 +21,6 @@ root.resizable(False, False)
 # Path
 home = os.path.expanduser("~")
 path_download = os.path.join(home, "Downloads")
-print(path_download)
 
 # logo
 logo_size = (100, 100)
@@ -44,6 +43,8 @@ field.place(x = 245, y = 199)
 # Progress bar
 progress_bar = Progressbar(root, orient = "horizontal", length=350, mode="determinate")
 
+
+
 # Progress bar progress
 def percent(bytes_remaning, size):
     return (((size-bytes_remaning)/size)*100)
@@ -56,12 +57,15 @@ def on_progress(stream, chunk, bytes_remaining):
     progress_bar["value"] = progress
     root.update()
 
+
 # Complete
 complete = False
 def complete(stream, path):
     global complete
     downloading_label["text"] = "Download Successful!"
     complete = True
+
+
 
 # Downloading label
 downloading_label = Label(root, text="Downloading.")
@@ -93,13 +97,10 @@ def btn_pressed():
     state_label.place(anchor=CENTER, x = WIN_X_MID, y = 270)
 
 
-    progress_bar.place(anchor=CENTER, x = WIN_X_MID, y = 300)
-    downloading_label.place(anchor=CENTER, x= WIN_X_MID, y = 320)
+    progress_bar.place(anchor=CENTER, x = WIN_X_MID, y = 315)
+    downloading_label.place(anchor=CENTER, x= WIN_X_MID, y = 350)
     loop()
-    
 
-
-    
 
     # Get youtube video
     video = video_link.streams.get_highest_resolution().download(path_download)
