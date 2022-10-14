@@ -1,4 +1,3 @@
-from cProfile import run
 from tkinter import *
 from tkinter.ttk import *
 import pytube
