@@ -1,1 +1,1 @@
-This program is for downloading youtube videos quickly and safely, with a very light-weight feeling.
+This program is made to downloading Youtube videos quickly and safely, with a very light-weight feeling.
